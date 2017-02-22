@@ -1,8 +1,8 @@
 import sqlite3
 #this is mostly an adaptation of the mysql scripts that RxNorm comes with
-
-basepath = r'C:\Program Files\RxNorm\rrf\\'  #change your path as needed
-rxnormdb = r'C:\Program Files\RxNorm\rxnorm.db'  #change your path as needed
+#database path here
+basepath = r'C:\Program Files\RxNorm\rrf\\'
+rxnormdb = r'C:\Program Files\RxNorm\rxnorm.db'
 rxnatomPath = basepath+ 'RXNATOMARCHIVE.RRF'
 rxnconsoPath = basepath + 'RXNCONSO.RRF'
 rxnrelPath = basepath + 'RXNREL.RRF'
@@ -19,22 +19,23 @@ cur.executescript('''
 DROP  TABLE IF EXISTS RXNATOMARCHIVE;
 CREATE TABLE RXNATOMARCHIVE
 (
-   RXAUI             TEXT NOT NULL,
+   RXAUI             INTEGER NOT NULL,
    AUI               TEXT,
    STR               TEXT NOT NULL,
    ARCHIVE_TIMESTAMP TEXT NOT NULL,
    CREATED_TIMESTAMP TEXT NOT NULL,
    UPDATED_TIMESTAMP TEXT NOT NULL,
-   CODE              TEXT,
+   CODE              INTEGER,
    IS_BRAND          TEXT,
    LAT               TEXT,
    LAST_RELEASED     TEXT,
    SAUI              TEXT,
    VSAB              TEXT,
-   RXCUI             TEXT,
+   RXCUI             INTEGER,
    SAB               TEXT,
    TTY               TEXT,
-   MERGED_TO_RXCUI   TEXT
+   MERGED_TO_RXCUI   INTEGER,
+   PRIMARY KEY (RXAUI, RXCUI, MERGED_TO_RXCUI)
 )
 ;
 
@@ -42,14 +43,14 @@ CREATE TABLE RXNATOMARCHIVE
 DROP  TABLE IF EXISTS RXNCONSO;
 CREATE TABLE RXNCONSO
 (
-   RXCUI             TEXT NOT NULL,
+   RXCUI             INTEGER NOT NULL,
    LAT               TEXT NOT NULL,
    TS                TEXT,
    LUI               TEXT,
    STT               TEXT,
    SUI               TEXT,
    ISPREF            TEXT,
-   RXAUI             TEXT NOT NULL,
+   RXAUI             INTEGER NOT NULL,
    SAUI              TEXT,
    SCUI              TEXT,
    SDUI              TEXT,
@@ -59,29 +60,32 @@ CREATE TABLE RXNCONSO
    STR               TEXT NOT NULL,
    SRL               TEXT,
    SUPPRESS          TEXT,
-   CVF               TEXT
+   CVF               TEXT,
+   PRIMARY KEY (RXAUI)
+
 )
 ;
 
 DROP TABLE IF EXISTS RXNREL;
 CREATE TABLE RXNREL
 (
-   RXCUI1    TEXT ,
-   RXAUI1    TEXT,
+   RXCUI1    INTEGER,
+   RXAUI1    INTEGER,
    STYPE1    TEXT,
    REL       TEXT ,
-   RXCUI2    TEXT ,
-   RXAUI2    TEXT,
+   RXCUI2    INTEGER ,
+   RXAUI2    INTEGER,
    STYPE2    TEXT,
    RELA      TEXT ,
-   RUI       TEXT,
+   RUI       INTEGER,
    SRUI      TEXT,
    SAB       TEXT NOT NULL,
    SL        TEXT,
    DIR       TEXT,
    RG        TEXT,
    SUPPRESS  TEXT,
-   CVF       TEXT
+   CVF       TEXT,
+   PRIMARY KEY (RXAUI1, RXCUI1, RXAUI2, RXCUI2, REL, RUI)
 )
 ;
 
@@ -112,17 +116,18 @@ CREATE TABLE RXNSAB
    CURVER         TEXT,
    SABIN          TEXT,
    SSN            TEXT,
-   SCIT           TEXT
+   SCIT           TEXT,
+   PRIMARY KEY (RSAB)
 )
 ;
 
 DROP TABLE IF EXISTS RXNSAT;
 CREATE TABLE RXNSAT
 (
-   RXCUI            TEXT ,
+   RXCUI            INTEGER ,
    LUI              TEXT,
    SUI              TEXT,
-   RXAUI            TEXT,
+   RXAUI            INTEGER,
    STYPE            TEXT,
    CODE             TEXT,
    ATUI             TEXT,
@@ -131,19 +136,21 @@ CREATE TABLE RXNSAT
    SAB              TEXT NOT NULL,
    ATV              TEXT,
    SUPPRESS         TEXT,
-   CVF              TEXT
+   CVF              TEXT,
+   PRIMARY KEY (RXAUI, RXCUI, SAB, ATN, ATV)
 )
 ;
 
 DROP TABLE IF EXISTS RXNSTY;
 CREATE TABLE RXNSTY
 (
-   RXCUI          TEXT NOT NULL,
+   RXCUI          INTEGER NOT NULL,
    TUI            TEXT,
    STN            TEXT,
    STY            TEXT,
    ATUI           TEXT,
-   CVF            TEXT
+   CVF            TEXT,
+   PRIMARY KEY (RXCUI, STY)
 )
 ;
 
@@ -158,23 +165,24 @@ CREATE TABLE RXNDOC (
 DROP  TABLE IF EXISTS  RXNCUICHANGES;
 CREATE TABLE RXNCUICHANGES
 (
-      RXAUI         TEXT,
+      RXAUI         INTEGER,
       CODE          TEXT,
       SAB           TEXT,
       TTY           TEXT,
       STR           TEXT,
-      OLD_RXCUI     TEXT NOT NULL,
-      NEW_RXCUI     TEXT NOT NULL
+      OLD_RXCUI     INTEGER NOT NULL,
+      NEW_RXCUI     INTEGER NOT NULL
 )
 ;
 
 DROP  TABLE IF EXISTS  RXNCUI;
  CREATE TABLE RXNCUI (
- cui1 TEXT,
- ver_start TEXT,
- ver_end   TEXT,
- cardinality TEXT,
- cui2       TEXT 
+ CUI1 INTEGER,
+ VER_START TEXT,
+ VER_END   TEXT,
+ CARDINALITY INTEGER,
+ CUI2       INTEGER,
+ PRIMARY KEY (CUI1, CUI2)
 )
 ;''')
 
